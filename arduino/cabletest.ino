@@ -3,30 +3,29 @@
 #define OLED_ADDR 0x3C
 Adafruit_SSD1306 display(128, 64);
 
-#define PIN_4051_S0 5
-#define PIN_4051_S1 4
-#define PIN_4051_S2 3
-#define PIN_4051_A A0
+#define PIN_4051_A 5
+#define PIN_4051_B 4
+#define PIN_4051_C 3
+#define PIN_4051_COM A0
 
 // set DEBUG to true to display raw ADC values instead of just "OK"
 const bool DEBUG = false;
 
 const char *labels[] = {
-	"-12v", "GND1", "GND2", "GND3", "+12v", "+5v", "GATE", "CV"};
+	"-12v", "GND1", "GND2", "GND3", "+12v", "+5v", "CV" , "GATE"};
 
-// map 4051 input pins to display order
-// must match label order
+// map 4051 input pins
+// must match labels[] order
 // see read_values()
-// this is really hacky and ugly and depends on your wiring
 const int order[] = {
-	6, // cv
-	5, // +5v
-	2, // gnd2
-	7, // gate
-	0, // -12v
-	4, // +12v
-	1, // gnd1
-	3  // gnd3
+    2, // -12v  (Pin 2 of the 4051 are connected to the -12 pin of the IDC)
+    1, // GND1  (Pin 1 of the 4051 are connected to the GND1 pin of the IDC)
+    0, // GND2
+    3, // GND3
+    4, // +12v
+    6, // +5v
+    7, // CV
+    5  // GATE
 };
 
 // allow some fluctuation on our ADC
@@ -51,9 +50,9 @@ int newvalues[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 void setup()
 {
-	pinMode(PIN_4051_S0, OUTPUT);
-	pinMode(PIN_4051_S1, OUTPUT);
-	pinMode(PIN_4051_S2, OUTPUT);
+	pinMode(PIN_4051_A, OUTPUT);
+	pinMode(PIN_4051_B, OUTPUT);
+	pinMode(PIN_4051_C, OUTPUT);
 
 	display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR);
 	display.clearDisplay();
@@ -250,9 +249,9 @@ void read_values()
 {
 	for (int i = 0; i < 8; i++)
 	{
-		digitalWrite(PIN_4051_S0, i & 1);
-		digitalWrite(PIN_4051_S1, i & 2);
-		digitalWrite(PIN_4051_S2, i & 4);
-		newvalues[order[i]] = myAnalogRead(PIN_4051_A);
+		digitalWrite(PIN_4051_A, order[i] & 1);
+		digitalWrite(PIN_4051_B, order[i] & 2);
+		digitalWrite(PIN_4051_C, order[i] & 4);
+		newvalues[i] = myAnalogRead(PIN_4051_COM);
 	}
 }
