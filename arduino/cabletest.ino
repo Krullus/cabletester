@@ -7,6 +7,15 @@ Adafruit_SSD1306 display(128, 64);
 #define PIN_4051_B 4
 #define PIN_4051_C 3
 #define PIN_4051_COM A0
+//define which pin of the idc connector that are connected to which pin of the 4051
+#define n12v_PIN_4051 2 //Change the number to the corresponding pin on the 4051
+#define GND1_PIN_4051 1
+#define GND2_PIN_4051 0
+#define GND3_PIN_4051 3
+#define p12v_PIN_4051 4
+#define p5v_PIN_4051 6
+#define CV_PIN_4051 7
+#define GATE_PIN_4051 5
 
 // set DEBUG to true to display raw ADC values instead of just "OK"
 const bool DEBUG = false;
@@ -14,19 +23,19 @@ const bool DEBUG = false;
 const char *labels[] = {
 	"-12v", "GND1", "GND2", "GND3", "+12v", "+5v", "CV" , "GATE"};
 
-// map 4051 input pins
-// must match labels[] order
-// see read_values()
+// maps 4051 input pins
+// the order for reading the input pins
 const int order[] = {
-    2, // -12v  (Pin 2 of the 4051 are connected to the -12 pin of the IDC)
-    1, // GND1  (Pin 1 of the 4051 are connected to the GND1 pin of the IDC)
-    0, // GND2
-    3, // GND3
-    4, // +12v
-    6, // +5v
-    7, // CV
-    5  // GATE
+    n12v_PIN_4051, // -12v
+    GND1_PIN_4051, // GND1
+    GND2_PIN_4051, // GND2
+    GND3_PIN_4051, // GND3
+    p12v_PIN_4051, // +12v
+    p5v_PIN_4051, // +5v
+    CV_PIN_4051, // CV
+    GATE_PIN_4051  // GATE
 };
+
 
 // allow some fluctuation on our ADC
 const int margin = 20;
